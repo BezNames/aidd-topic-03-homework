@@ -1,8 +1,10 @@
 from django.urls import reverse
+from django.contrib.auth.models import User
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from dashboard.models import Share
+from dashboard.models import PriceAlert, PriceAlertNotification, Share
+from dashboard.tasks import evaluate_price_alerts
 
 
 class DashboardTests(APITestCase):
@@ -120,3 +122,65 @@ class DashboardTests(APITestCase):
     def test_share_delete_invalid(self):
         response = self.client.delete("/api/v1/shares/3/")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+
+class PriceAlertTests(APITestCase):
+    def setUp(self) -> None:
+        self.user = User.objects.create_user(username="investor", password="secret")
+        self.other_user = User.objects.create_user(
+            username="other-investor", password="secret"
+        )
+        self.share = Share.objects.create(
+            figi="BBG000B9XRY4",
+            isin="US0378331005",
+            name="Apple",
+            ticker="AAPL",
+            currency="usd",
+            uid="a9eb4238-eba9-488c-b102-b6140fd08e38",
+            last_price=100,
+        )
+        self.client.force_authenticate(self.user)
+
+    def test_user_can_create_and_only_list_own_alerts(self):
+        response = self.client.post(
+            "/api/v1/price-alerts/",
+            {
+                "share": self.share.id,
+                "target_price": "110.00",
+                "direction": "above",
+            },
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        alert = PriceAlert.objects.get()
+        self.assertEqual(alert.user, self.user)
+
+        PriceAlert.objects.create(
+            user=self.other_user,
+            share=self.share,
+            target_price=90,
+            direction=PriceAlert.BELOW,
+        )
+        response = self.client.get("/api/v1/price-alerts/")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data["results"]), 1)
+
+    def test_reached_alert_creates_only_one_notification(self):
+        alert = PriceAlert.objects.create(
+            user=self.user,
+            share=self.share,
+            target_price=100,
+            direction=PriceAlert.ABOVE,
+        )
+        self.share.last_price = 101
+        evaluate_price_alerts(self.share)
+        evaluate_price_alerts(self.share)
+
+        self.assertEqual(PriceAlertNotification.objects.filter(alert=alert).count(), 1)
+        alert.refresh_from_db()
+        self.assertIsNotNone(alert.triggered_at)
+
+        response = self.client.get("/api/v1/price-alert-notifications/")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data["results"]), 1)

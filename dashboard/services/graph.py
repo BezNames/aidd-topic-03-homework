@@ -2,13 +2,17 @@ from datetime import timedelta
 
 from plotly.graph_objs import Scatter
 from plotly.offline import plot
-from tinkoff.invest import CandleInterval, Client
-from tinkoff.invest.utils import now
 
 from config.settings import TINKOFF_TOKEN
 
 
 def get_graph(share):
+    if not TINKOFF_TOKEN:
+        raise RuntimeError("TINKOFF_TOKEN is not configured")
+
+    from tinkoff.invest import CandleInterval, Client
+    from tinkoff.invest.utils import now
+
     with Client(TINKOFF_TOKEN) as client:
         x_data, y_data = [], []
         for candle in client.get_all_candles(

@@ -1,4 +1,7 @@
 from django.db import models
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 
 class Share(models.Model):
@@ -19,3 +22,37 @@ class Share(models.Model):
     class Meta:
         verbose_name = "Акция"
         verbose_name_plural = "Акции"
+
+
+class PriceAlert(models.Model):
+    """Персональное условие уведомления о цене акции."""
+
+    ABOVE = "above"
+    BELOW = "below"
+    DIRECTIONS = ((ABOVE, "Выше или равно"), (BELOW, "Ниже или равно"))
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="price_alerts")
+    share = models.ForeignKey(
+        Share, on_delete=models.CASCADE, related_name="price_alerts"
+    )
+    target_price = models.DecimalField(max_digits=20, decimal_places=4)
+    direction = models.CharField(max_length=5, choices=DIRECTIONS)
+    is_active = models.BooleanField(default=True)
+    triggered_at = models.DateTimeField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+
+class PriceAlertNotification(models.Model):
+    """Единственное уведомление о срабатывании конкретного условия."""
+
+    alert = models.OneToOneField(
+        PriceAlert, on_delete=models.CASCADE, related_name="notification"
+    )
+    triggered_price = models.DecimalField(max_digits=20, decimal_places=4)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
