@@ -4,7 +4,7 @@
 
 - Проект: `aidd-topic-03-homework`.
 - Исходная ветка: `main`.
-- Рабочая ветка: `beznames-copilot-implementation`.
+- Рабочая ветка: `copilot-implementation`.
 - Агент: GitHub Copilot.
 - Второй независимый результат подготовлен в ветке
   `qwen-implementation` с использованием Qwen.
@@ -12,7 +12,7 @@
   реализацию не переносились.
 
 Этот файл описывает именно работу Copilot. Сравнение Copilot и Qwen находится в
-`ANALYSYS.md`.
+`ANALYSIS.md`.
 
 ## 2. Выполнение задания №1: анализ исходного проекта
 
@@ -48,7 +48,7 @@ Invest API.
 Пользовательские наблюдения, уведомления, портфели и история цен отсутствовали.
 
 Результаты анализа сохранены в сравнительном и проектном материале
-`ANALYSYS.md`, а технические изменения перечислены ниже.
+`ANALYSIS.md`, а технические изменения перечислены ниже.
 
 ## 3. Выполнение задания №2: восстановление требований
 
@@ -175,7 +175,7 @@ HTTP-проверка выполнялась после запуска `python m
 - `dashboard/admin.py`;
 - `dashboard/tests.py`;
 - `dashboard/migrations/0008_pricealert_pricealertnotification.py`;
-- `ANALYSYS.md`;
+- `ANALYSIS.md`;
 - `AGENT_REPORT.md`.
 
 ## 8. Ограничения и итог

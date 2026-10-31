@@ -7,11 +7,11 @@
 
 | Ветка | Финальный commit по состоянию проверки | Доказательства использованного агента |
 |---|---|---|
-| `beznames-copilot-implementation` | `e9d60b4` | `AGENTS_REPORT.md` прямо называет Copilot |
-| `qwen-implementation` | `679aee3` | `AGENTS_REPORT.md` и `PROMT.md` прямо называют Qwen |
+| `copilot-implementation` | `e9d60b4` | `AGENT_REPORT.md` прямо называет Copilot |
+| `qwen-implementation` | `679aee3` | `AGENT_REPORT.md` и `PROMT.md` прямо называют Qwen |
 
 Выводы ниже основаны на содержимом веток, истории Git и повторной проверке в
-изолированных worktree. Заявления из `AGENTS_REPORT.md` помечаются как заявления
+изолированных worktree. Заявления из `AGENT_REPORT.md` помечаются как заявления
 агента и не считаются подтверждёнными без повторной проверки.
 
 ## 2. Общая исходная функциональность
@@ -106,7 +106,7 @@ REST-сценарии, Celery/Tinkoff-интеграция, ограничени
 `python manage.py migrate --noinput`, `python -m compileall -q .`,
 `python manage.py test` и отдельным запуском HTTP-сервера.
 
-| Проверка | `beznames-copilot-implementation` | `qwen-implementation` |
+| Проверка | `copilot-implementation` | `qwen-implementation` |
 |---|---|---|
 | Django check | Успешно, `0 issues` | Успешно, `0 issues` |
 | Проверка миграций | `No changes detected` | `No changes detected` |
