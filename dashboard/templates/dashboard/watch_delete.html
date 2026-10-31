@@ -1,0 +1,14 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}
+    <title>Удаление наблюдения</title>
+{% endblock %}
+
+{% block content %}
+    <form method="post">
+        {% csrf_token %}
+        <p>Вы уверены, что хотите удалить наблюдение за акцией <b>"{{ watch.share.ticker }}"</b>?</p>
+        <input type="submit" class="btn btn-sm btn-outline-danger rounded-pill" value="Удалить" />
+        <a href="{% url 'dashboard:watch-index' %}" class="btn btn-sm btn-outline-secondary">Отмена</a>
+    </form>
+{% endblock %}

@@ -2,7 +2,8 @@
 __pycache__/
 *.py[cod]
 
-# Environments and IDE
+# IDE / tool session data
+.qwen/
 .venv/
 venv/
 .idea/
@@ -23,6 +24,11 @@ celeryd.pid
 !.env.example
 *.pem
 *.key
+.secret_key
+
+# Pip / session leftovers (caches of local installs)
+*.whl
+*.tar.gz
 
 # Logs and test cache
 *.log

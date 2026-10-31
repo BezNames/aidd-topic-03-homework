@@ -1,0 +1,62 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}
+    <title>Уведомления</title>
+{% endblock %}
+
+{% block content %}
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>Уведомления</h3>
+        <a href="{% url 'dashboard:watch-index' %}" class="btn btn-primary">К наблюдениям</a>
+    </div>
+
+    {% if notifications %}
+        <table class="table table-striped align-middle">
+            <thead>
+            <tr>
+                <th scope="col">Акция</th>
+                <th scope="col">Условие</th>
+                <th scope="col">Текст</th>
+                <th scope="col">Когда</th>
+            </tr>
+            </thead>
+            <tbody>
+
+            {% for notification in notifications %}
+                <tr>
+                    <td>{{ notification.watch.share.ticker }}</td>
+                    <td>{{ notification.watch.get_direction_display }} {{ notification.watch.target_price }}</td>
+                    <td>{{ notification.message }}</td>
+                    <td>{{ notification.triggered_at|date:"d.m.Y H:i" }}</td>
+                </tr>
+            {% endfor %}
+
+            </tbody>
+        </table>
+
+        <div class="btn-group" role="group" aria-label="Item pagination">
+            {% if page_obj.has_previous %}
+                <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-outline-primary">&laquo;</a>
+            {% endif %}
+
+            {% for page_number in page_obj.paginator.page_range %}
+                {% if page_obj.number == page_number %}
+                    <button class="btn btn-outline-primary active">
+                        <span>{{ page_number }} <span class="sr-only">(current)</span></span>
+                    </button>
+                {% else %}
+                    <a href="?page={{ page_number }}" class="btn btn-outline-primary">
+                        {{ page_number }}
+                    </a>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}" class="btn btn-outline-primary">&raquo;</a>
+            {% endif %}
+        </div>
+
+    {% else %}
+        <div class="alert alert-info">Уведомлений пока нет. Установите целевые цены в наблюдениях.</div>
+    {% endif %}
+{% endblock %}
